@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国象棋</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #1a1a2e; min-height: 100vh;
+    display: flex; justify-content: center; align-items: center;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  }
+  .container {
+    background: #2d2d44; padding: 30px 40px; border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 20px; }
+  .header h1 { color: #e8d5b7; font-size: 22px; letter-spacing: 3px; white-space: nowrap; }
+  .status { color: #e8d5b7; font-size: 15px; padding: 6px 16px; background: #3d3d5c; border-radius: 8px; white-space: nowrap; }
+  .status .highlight { font-weight: 700; }
+  .status.red-turn .highlight { color: #e74c3c; }
+  .status.black-turn .highlight { color: #333; }
+
+  .header-right { display: flex; align-items: center; gap: 12px; overflow: hidden; }
+  .move-log {
+    background: #3d3d5c; border-radius: 8px; padding: 6px 12px;
+    max-height: 80px; overflow-y: auto; min-width: 160px;
+    font-size: 12px; color: #b0b0d0; line-height: 1.6;
+    scrollbar-width: thin; scrollbar-color: #5a5a7a #3d3d5c;
+  }
+  .move-log::-webkit-scrollbar { width: 4px; }
+  .move-log::-webkit-scrollbar-track { background: #3d3d5c; }
+  .move-log::-webkit-scrollbar-thumb { background: #5a5a7a; border-radius: 2px; }
+  .move-entry { display: flex; align-items: center; gap: 4px; }
+  .move-entry .tag {
+    display: inline-block; padding: 0 5px; border-radius: 3px;
+    font-size: 11px; font-weight: 700; line-height: 1.6;
+  }
+  .move-entry .tag.red { color: #fff; background: #c0392b; }
+  .move-entry .tag.black { color: #fff; background: #2c3e50; }
+  .move-entry .pos { color: #8888aa; font-size: 11px; }
+
+  canvas { display: block; cursor: pointer; border-radius: 8px; }
+  .footer { display: flex; justify-content: center; margin-top: 14px; gap: 10px; }
+  .footer button {
+    background: #e8d5b7; border: none; padding: 8px 24px;
+    border-radius: 8px; font-size: 14px; cursor: pointer;
+    font-family: inherit; color: #1a1a2e; font-weight: 600;
+    transition: background 0.2s;
+  }
+  .footer button:hover { background: #f0e6d0; }
+  .footer button:disabled { opacity: 0.4; cursor: not-allowed; }
+  #undoBtn {
+    background: #5a5a7a; color: #e8d5b7;
+  }
+  #undoBtn:hover:not(:disabled) { background: #6a6a8a; }
+
+  .controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; justify-content: center; align-items: center; }
+  .controls .btn-group { display: flex; gap: 0; align-items: center; }
+  .controls button {
+    background: #3d3d5c; border: 1px solid #5a5a7a; padding: 5px 14px;
+    color: #b0b0d0; font-size: 13px; cursor: pointer; font-family: inherit;
+    transition: all 0.2s;
+  }
+  .controls button:first-child { border-radius: 6px 0 0 6px; }
+  .controls button:last-child { border-radius: 0 6px 6px 0; }
+  .controls button:only-child { border-radius: 6px; }
+  .controls button.active { background: #2b6cb0; border-color: #2b6cb0; color: #fff; }
+  .controls button:hover:not(.active) { background: #4a4a6a; }
+  .controls .label { color: #8888aa; font-size: 13px; padding: 5px 8px 5px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>中国象棋</h1>
+    <div class="header-right">
+      <div class="move-log" id="moveLog">
+        <div style="color:#666;font-style:italic">暂无走棋记录</div>
+      </div>
+      <div class="status red-turn" id="status"><span class="highlight">红方</span>走棋</div>
+    </div>
+  </div>
+  <div class="controls">
+    <div class="btn-group" id="modeGroup">
+      <button class="active" data-mode="pvp">人人对决</button>
+      <button data-mode="pve">人机对决</button>
+    </div>
+    <div class="btn-group" id="diffGroup" style="display:none">
+      <span class="label">难度</span>
+      <button data-diff="hard">困难</button>
+      <button data-diff="inferno" class="active">炼狱</button>
+      <button data-diff="hell">地狱</button>
+    </div>
+  </div>
+  <canvas id="board"></canvas>
+  <div class="footer">
+    <button id="undoBtn" onclick="undoMove()" disabled>悔棋</button>
+    <button onclick="resetGame()">重新开始</button>
+  </div>
+</div>
+<script>
+const canvas = document.getElementById('board');
+const ctx = canvas.getContext('2d');
+const statusEl = document.getElementById('status');
+const moveLogEl = document.getElementById('moveLog');
+const undoBtn = document.getElementById('undoBtn');
+
+// ============ CONSTANTS ============
+const CELL = 60;
+const PAD = 48;
+const PIECE_R = 25;
+const COLS = 9;
+const ROWS = 10;
+const W = PAD * 2 + CELL * (COLS - 1);
+const H = PAD * 2 + CELL * (ROWS - 1);
+canvas.width = W;
+canvas.height = H;
+
+const COLOR = { RED: 'red', BLACK: 'black' };
+
+const PIECE_CHARS = {
+  red:   { general:'帅', advisor:'仕', elephant:'相', horse:'马', chariot:'车', cannon:'炮', soldier:'兵' },
+  black: { general:'将', advisor:'士', elephant:'象', horse:'马', chariot:'车', cannon:'砲', soldier:'卒' }
+};
+
+const CHAR_TO_TYPE = {
+  '帅':'general','仕':'advisor','相':'elephant','马':'horse','车':'chariot','炮':'cannon','兵':'soldier',
+  '将':'general','士':'advisor','象':'elephant','马':'horse','车':'chariot','砲':'cannon','卒':'soldier'
+};
+CHAR_TO_TYPE['傌'] = 'horse'; CHAR_TO_TYPE['俥'] = 'chariot';
+CHAR_TO_TYPE['馬'] = 'horse'; CHAR_TO_TYPE['車'] = 'chariot';
+
+const PIECE_SHORT = {
+  general: '帅', advisor: '仕', elephant: '相', horse: '马',
+  chariot: '车', cannon: '炮', soldier: '兵'
+};
+
+// ============ BOARD STATE ============
+let board = [];
+let turn = COLOR.RED;
+let selected = null;
+let validMoves = [];
+let gameOver = false;
+let moveHistory = [];
+let moveLog = [];
+let gameMode = 'pvp';
+let difficulty = 'inferno';
+let aiThinking = false;
+
+// ============ ANIMATION SYSTEM ============
+let landingAnim = null;
+
+function triggerLanding(row, col) {
+  landingAnim = { row, col, startTime: Date.now() };
+  requestAnimationFrame(render);
+}
+
+// ============ VOICE ============
+function say(text) {
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN';
+    u.rate = 1.2;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch(e) {}
+}
+
+// ============ COORD HELPERS ============
+function toX(col) { return PAD + col * CELL; }
+function toY(row) { return PAD + row * CELL; }
+function fromXY(x, y) {
+  const col = Math.round((x - PAD) / CELL);
+  const row = Math.round((y - PAD) / CELL);
+  if (col < 0 || col > 8 || row < 0 || row > 9) return null;
+  const dx = x - toX(col), dy = y - toY(row);
+  if (Math.abs(dx) < CELL * 0.45 && Math.abs(dy) < CELL * 0.45) return { row, col };
+  return null;
+}
+function inBoard(r, c) { return r >= 0 && r <= 9 && c >= 0 && c <= 8; }
+function inPalace(r, c, color) {
+  if (c < 3 || c > 5) return false;
+  return color === COLOR.RED ? (r >= 7 && r <= 9) : (r >= 0 && r <= 2);
+}
+function onOwnSide(r, color) {
+  return color === COLOR.RED ? r >= 5 : r <= 4;
+}
+
+// ============ MOVE GENERATION ============
+function genMoves(boardState, color) {
+  const moves = [];
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const p = boardState[r][c];
+      if (!p || p.color !== color) continue;
+      const raw = rawMoves(boardState, r, c);
+      for (const m of raw) moves.push({ fromR: r, fromC: c, toR: m.row, toC: m.col });
+    }
+  }
+  return moves;
+}
+
+function genLegalMoves(boardState, color) {
+  const all = genMoves(boardState, color);
+  return all.filter(m => {
+    const sim = simulateMove(boardState, m);
+    return !isInCheck(sim, color);
+  });
+}
+
+function simulateMove(boardState, move) {
+  const copy = boardState.map(row => row.map(cell => cell ? { ...cell } : null));
+  copy[move.toR][move.toC] = copy[move.fromR][move.fromC];
+  copy[move.fromR][move.fromC] = null;
+  return copy;
+}
+
+function rawMoves(boardState, r, c) {
+  const p = boardState[r][c];
+  if (!p) return [];
+  switch (p.type) {
+    case 'general': return generalMoves(boardState, r, c, p.color);
+    case 'advisor': return advisorMoves(boardState, r, c, p.color);
+    case 'elephant': return elephantMoves(boardState, r, c, p.color);
+    case 'horse': return horseMoves(boardState, r, c, p.color);
+    case 'chariot': return chariotMoves(boardState, r, c, p.color);
+    case 'cannon': return cannonMoves(boardState, r, c, p.color);
+    case 'soldier': return soldierMoves(boardState, r, c, p.color);
+    default: return [];
+  }
+}
+
+function addMove(moves, boardState, fromR, fromC, toR, toC, color) {
+  if (!inBoard(toR, toC)) return;
+  const target = boardState[toR][toC];
+  if (target && target.color === color) return;
+  moves.push({ row: toR, col: toC });
+}
+
+function generalMoves(boardState, r, c, color) {
+  const moves = [];
+  const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+  for (const [dr, dc] of dirs) {
+    const nr = r + dr, nc = c + dc;
+    if (inPalace(nr, nc, color)) addMove(moves, boardState, r, c, nr, nc, color);
+  }
+  const oppColor = color === COLOR.RED ? COLOR.BLACK : COLOR.RED;
+  const oppGenRow = findGeneral(boardState, oppColor);
+  if (oppGenRow && oppGenRow.col === c) {
+    let blocked = false;
+    const minR = Math.min(r, oppGenRow.row);
+    const maxR = Math.max(r, oppGenRow.row);
+    for (let rr = minR + 1; rr < maxR; rr++) {
+      if (boardState[rr][c]) { blocked = true; break; }
+    }
+    if (!blocked) moves.push({ row: oppGenRow.row, col: oppGenRow.col });
+  }
+  return moves;
+}
+
+function advisorMoves(boardState, r, c, color) {
+  const moves = [];
+  const dirs = [[-1,-1],[-1,1],[1,-1],[1,1]];
+  for (const [dr, dc] of dirs) {
+    const nr = r + dr, nc = c + dc;
+    if (inPalace(nr, nc, color)) addMove(moves, boardState, r, c, nr, nc, color);
+  }
+  return moves;
+}
+
+function elephantMoves(boardState, r, c, color) {
+  const moves = [];
+  const dirs = [[-2,-2],[-2,2],[2,-2],[2,2]];
+  const eyes = [[-1,-1],[-1,1],[1,-1],[1,1]];
+  for (let i = 0; i < 4; i++) {
+    const nr = r + dirs[i][0], nc = c + dirs[i][1];
+    const er = r + eyes[i][0], ec = c + eyes[i][1];
+    if (!inBoard(nr, nc)) continue;
+    if (!onOwnSide(nr, color)) continue;
+    if (boardState[er][ec]) continue;
+    addMove(moves, boardState, r, c, nr, nc, color);
+  }
+  return moves;
+}
+
+function horseMoves(boardState, r, c, color) {
+  const moves = [];
+  const legs = [[-1,0], [1,0], [0,-1], [0,1]];
+  const jumps = [
+    [[-2,-1],[-2,1]],
+    [[2,-1],[2,1]],
+    [[-1,-2],[1,-2]],
+    [[-1,2],[1,2]]
+  ];
+  for (let i = 0; i < 4; i++) {
+    const lr = r + legs[i][0], lc = c + legs[i][1];
+    if (!inBoard(lr, lc) || boardState[lr][lc]) continue;
+    for (const [dr, dc] of jumps[i]) {
+      addMove(moves, boardState, r, c, r + dr, c + dc, color);
+    }
+  }
+  return moves;
+}
+
+function chariotMoves(boardState, r, c, color) {
+  const moves = [];
+  const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+  for (const [dr, dc] of dirs) {
+    let nr = r + dr, nc = c + dc;
+    while (inBoard(nr, nc)) {
+      const target = boardState[nr][nc];
+      if (!target) {
+        moves.push({ row: nr, col: nc });
+      } else {
+        if (target.color !== color) moves.push({ row: nr, col: nc });
+        break;
+      }
+      nr += dr; nc += dc;
+    }
+  }
+  return moves;
+}
+
+function cannonMoves(boardState, r, c, color) {
+  const moves = [];
+  const dirs = [[-1,0],[1,0],[0,-1],[0,1]];
+  for (const [dr, dc] of dirs) {
+    let nr = r + dr, nc = c + dc;
+    let screen = false;
+    while (inBoard(nr, nc)) {
+      const target = boardState[nr][nc];
+      if (!screen) {
+        if (!target) {
+          moves.push({ row: nr, col: nc });
+        } else {
+          screen = true;
+        }
+      } else {
+        if (target) {
+          if (target.color !== color) moves.push({ row: nr, col: nc });
+          break;
+        }
+      }
+      nr += dr; nc += dc;
+    }
+  }
+  return moves;
+}
+
+function soldierMoves(boardState, r, c, color) {
+  const moves = [];
+  const forward = color === COLOR.RED ? -1 : 1;
+  const crossed = !onOwnSide(r, color);
+  addMove(moves, boardState, r, c, r + forward, c, color);
+  if (crossed) {
+    addMove(moves, boardState, r, c, r, c - 1, color);
+    addMove(moves, boardState, r, c, r, c + 1, color);
+  }
+  return moves;
+}
+
+// ============ CHECK DETECTION ============
+function findGeneral(boardState, color) {
+  for (let r = 0; r < ROWS; r++)
+    for (let c = 0; c < COLS; c++)
+      if (boardState[r][c] && boardState[r][c].type === 'general' && boardState[r][c].color === color)
+        return { row: r, col: c };
+  return null;
+}
+
+function isInCheck(boardState, color) {
+  const gen = findGeneral(boardState, color);
+  if (!gen) return true;
+  const opp = color === COLOR.RED ? COLOR.BLACK : COLOR.RED;
+  const oppMoves = genMoves(boardState, opp);
+  for (const m of oppMoves) {
+    if (m.toR === gen.row && m.toC === gen.col) return true;
+  }
+  return false;
+}
+
+function hasLegalMoves(boardState, color) {
+  return genLegalMoves(boardState, color).length > 0;
+}
+
+function getGameState(boardState, color) {
+  if (!hasLegalMoves(boardState, color)) {
+    if (isInCheck(boardState, color)) return 'checkmate';
+    return 'stalemate';
+  }
+  if (isInCheck(boardState, color)) return 'check';
+  return 'normal';
+}
+
+// ============ MOVE LOG ============
+const COL_LETTERS = ['a','b','c','d','e','f','g','h','i'];
+
+function posStr(row, col) {
+  return COL_LETTERS[col] + (row + 1);
+}
+
+function pushMoveLog(color, piece, fromR, fromC, toR, toC, captured) {
+  const displayName = PIECE_SHORT[piece] || piece;
+  const capStr = captured ? '吃' : '→';
+  const entryText = `${displayName} ${posStr(fromR, fromC)} ${capStr} ${posStr(toR, toC)}`;
+
+  moveLog.push({ color, text: entryText, captured: !!captured });
+  updateMoveLogUI();
+}
+
+function updateMoveLogUI() {
+  if (moveLog.length === 0) {
+    moveLogEl.innerHTML = '<div style="color:#666;font-style:italic">暂无走棋记录</div>';
+    return;
+  }
+  const recent = moveLog.slice(-15);
+  moveLogEl.innerHTML = recent.map(m =>
+    `<div class="move-entry"><span class="tag ${m.color}">${m.color === COLOR.RED ? '红' : '黑'}</span> ${m.text}</div>`
+  ).join('');
+  moveLogEl.scrollTop = moveLogEl.scrollHeight;
+}
+
+// ============ UNDO ============
+function undoMove() {
+  if (moveHistory.length === 0 || aiThinking) return;
+
+  const steps = (gameMode === 'pve' && moveHistory.length >= 2) ? 2 : 1;
+
+  for (let i = 0; i < steps; i++) {
+    if (moveHistory.length === 0) break;
+    const last = moveHistory.pop();
+    board[last.fromR][last.fromC] = last.piece;
+    board[last.toR][last.toC] = last.captured || null;
+    moveLog.pop();
+    turn = last.piece.color;
+  }
+
+  gameOver = false;
+  selected = null;
+  validMoves = [];
+  updateMoveLogUI();
+
+  const state = getGameState(board, turn);
+  if (state === 'check') {
+    updateStatus(`⚡ ${turn === COLOR.RED ? '红方' : '黑方'}被将军！`, false);
+  } else {
+    updateStatus(`${turn === COLOR.RED ? '红方' : '黑方'}走棋`, false);
+  }
+
+  updateUndoBtn();
+  render();
+}
+
+function updateUndoBtn() {
+  undoBtn.disabled = moveHistory.length === 0 || aiThinking || gameOver;
+}
+
+// ============ AI ENGINE ============
+const PIECE_VALUES = {
+  general: 100000, chariot: 1000, cannon: 500,
+  horse: 450, elephant: 200, advisor: 200, soldier: 100
+};
+
+function evaluateBoard(boardState) {
+  let score = 0;
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const p = boardState[r][c];
+      if (!p) continue;
+      let val = PIECE_VALUES[p.type];
+      if (p.type === 'soldier' && !onOwnSide(r, p.color)) val += 50;
+      if (p.type === 'horse') {
+        const centerDist = Math.abs(c - 4) + Math.abs((p.color === COLOR.RED ? 9 - r : r) - 4);
+        val += Math.max(0, 6 - centerDist) * 8;
+      }
+      score += p.color === COLOR.BLACK ? val : -val;
+    }
+  }
+  return score;
+}
+
+function orderMoves(moves, boardState) {
+  return moves.sort((a, b) => {
+    const capA = boardState[a.toR]?.[a.toC];
+    const capB = boardState[b.toR]?.[b.toC];
+    return (capB ? PIECE_VALUES[capB.type] : 0) - (capA ? PIECE_VALUES[capA.type] : 0);
+  });
+}
+
+function minimax(boardState, depth, alpha, beta, isMaximizing, maxDepth) {
+  if (depth === 0) return evaluateBoard(boardState);
+
+  const color = isMaximizing ? COLOR.BLACK : COLOR.RED;
+  let moves = genLegalMoves(boardState, color);
+
+  if (moves.length === 0) {
+    const score = 999999 - (maxDepth - depth);
+    return isMaximizing ? -score : score;
+  }
+
+  orderMoves(moves, boardState);
+
+  if (isMaximizing) {
+    let maxEval = -Infinity;
+    for (const m of moves) {
+      const sim = simulateMove(boardState, m);
+      const evalScore = minimax(sim, depth - 1, alpha, beta, false, maxDepth);
+      maxEval = Math.max(maxEval, evalScore);
+      alpha = Math.max(alpha, evalScore);
+      if (beta <= alpha) break;
+    }
+    return maxEval;
+  } else {
+    let minEval = Infinity;
+    for (const m of moves) {
+      const sim = simulateMove(boardState, m);
+      const evalScore = minimax(sim, depth - 1, alpha, beta, true, maxDepth);
+      minEval = Math.min(minEval, evalScore);
+      beta = Math.min(beta, evalScore);
+      if (beta <= alpha) break;
+    }
+    return minEval;
+  }
+}
+
+function getBestMove(boardState, diff) {
+  const depths = { hard: 2, inferno: 3, hell: 4 };
+  const maxDepth = depths[diff] || 2;
+
+  let moves = genLegalMoves(boardState, COLOR.BLACK);
+  if (moves.length === 0) return null;
+
+  orderMoves(moves, boardState);
+
+  let bestMove = moves[0];
+  let alpha = -Infinity;
+  const beta = Infinity;
+
+  for (const m of moves) {
+    const sim = simulateMove(boardState, m);
+    const score = minimax(sim, maxDepth - 1, alpha, beta, false, maxDepth);
+    if (score > alpha) {
+      alpha = score;
+      bestMove = m;
+    }
+  }
+
+  return bestMove;
+}
+
+function aiMove() {
+  if (gameOver || turn !== COLOR.BLACK || gameMode !== 'pve') return;
+  aiThinking = true;
+  updateStatus('🤔 AI思考中...', false);
+  updateUndoBtn();
+  render();
+
+  setTimeout(() => {
+    const best = getBestMove(board, difficulty);
+    if (!best) {
+      aiThinking = false;
+      const state = getGameState(board, COLOR.BLACK);
+      if (state === 'checkmate' || state === 'stalemate') {
+        gameOver = true;
+        updateStatus('🏆 红方获胜！', true);
+        render();
+      }
+      return;
+    }
+
+    const captured = board[best.toR][best.toC];
+    const piece = board[best.fromR][best.fromC];
+
+    board[best.toR][best.toC] = board[best.fromR][best.fromC];
+    board[best.fromR][best.fromC] = null;
+    moveHistory.push({ fromR: best.fromR, fromC: best.fromC, toR: best.toR, toC: best.toC, piece, captured });
+
+    pushMoveLog(COLOR.BLACK, piece.type, best.fromR, best.fromC, best.toR, best.toC, captured);
+    triggerLanding(best.toR, best.toC);
+    if (captured) say('吃');
+
+    turn = COLOR.RED;
+    aiThinking = false;
+
+    const state = getGameState(board, COLOR.RED);
+    if (state === 'checkmate') {
+      gameOver = true;
+      updateStatus('🏆 黑方获胜！将杀！', true);
+    } else if (state === 'stalemate') {
+      gameOver = true;
+      updateStatus('🏆 黑方获胜！困毙！', true);
+    } else if (state === 'check') {
+      updateStatus('⚡ 红方被将军！', false);
+      say('将军');
+    } else {
+      updateStatus('红方走棋', false);
+    }
+    updateUndoBtn();
+    render();
+  }, 50);
+}
+
+// ============ GAME LOGIC ============
+function getValidMovesFor(boardState, r, c) {
+  const p = boardState[r][c];
+  if (!p) return [];
+  const allMoves = genLegalMoves(boardState, p.color);
+  return allMoves.filter(m => m.fromR === r && m.fromC === c);
+}
+
+function handleClick(row, col) {
+  if (gameOver || aiThinking) return;
+
+  if (selected) {
+    const isValid = validMoves.some(m => m.toR === row && m.toC === col);
+
+    if (isValid) {
+      const fromR = selected.row, fromC = selected.col;
+      const captured = board[row][col];
+      const piece = board[fromR][fromC];
+
+      board[row][col] = piece;
+      board[fromR][fromC] = null;
+
+      moveHistory.push({ fromR, fromC, toR: row, toC: col, piece, captured });
+
+      pushMoveLog(turn, piece.type, fromR, fromC, row, col, captured);
+      triggerLanding(row, col);
+      if (captured) say('吃');
+
+      turn = turn === COLOR.RED ? COLOR.BLACK : COLOR.RED;
+      selected = null;
+      validMoves = [];
+
+      const state = getGameState(board, turn);
+      if (state === 'checkmate') {
+        const winner = turn === COLOR.RED ? '黑方' : '红方';
+        gameOver = true;
+        updateStatus(`🏆 ${winner}获胜！将杀！`, true);
+      } else if (state === 'stalemate') {
+        const winner = turn === COLOR.RED ? '黑方' : '红方';
+        gameOver = true;
+        updateStatus(`🏆 ${winner}获胜！困毙！`, true);
+      } else if (state === 'check') {
+        updateStatus(`⚡ ${turn === COLOR.RED ? '红方' : '黑方'}被将军！`, false);
+        say('将军');
+      } else {
+        updateStatus(`${turn === COLOR.RED ? '红方' : '黑方'}走棋`, false);
+      }
+      updateUndoBtn();
+      render();
+      if (gameMode === 'pve' && turn === COLOR.BLACK && !gameOver) aiMove();
+      return;
+    }
+
+    const p = board[row][col];
+    if (p && p.color === turn) {
+      selected = { row, col };
+      validMoves = getValidMovesFor(board, row, col);
+      render();
+      return;
+    }
+
+    selected = null;
+    validMoves = [];
+    render();
+    return;
+  }
+
+  const p = board[row][col];
+  if (p && p.color === turn) {
+    selected = { row, col };
+    validMoves = getValidMovesFor(board, row, col);
+    render();
+  }
+}
+
+function updateStatus(text, isGameOver) {
+  statusEl.innerHTML = text;
+  statusEl.className = 'status';
+  if (!isGameOver) {
+    if (turn === COLOR.RED) statusEl.classList.add('red-turn');
+    else statusEl.classList.add('black-turn');
+  }
+}
+
+function resetGame() {
+  initBoard();
+  turn = COLOR.RED;
+  selected = null;
+  validMoves = [];
+  gameOver = false;
+  moveHistory = [];
+  moveLog = [];
+  aiThinking = false;
+  landingAnim = null;
+  updateMoveLogUI();
+  updateUndoBtn();
+  updateStatus(gameMode === 'pve' ? '红方走棋' : '<span class="highlight">红方</span>走棋', false);
+  render();
+}
+
+// ============ RENDERING ============
+function render() {
+  ctx.clearRect(0, 0, W, H);
+  drawBoard();
+  drawPieces();
+  drawSelection();
+}
+
+function drawBoard() {
+  ctx.fillStyle = '#f0d9a0';
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = '#5c3a1e';
+
+  for (let r = 0; r < ROWS; r++) {
+    ctx.beginPath();
+    ctx.moveTo(toX(0), toY(r));
+    ctx.lineTo(toX(8), toY(r));
+    ctx.stroke();
+  }
+
+  for (let c = 0; c < COLS; c++) {
+    if (c === 0 || c === 8) {
+      ctx.beginPath();
+      ctx.moveTo(toX(c), toY(0));
+      ctx.lineTo(toX(c), toY(9));
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.moveTo(toX(c), toY(0));
+      ctx.lineTo(toX(c), toY(4));
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(toX(c), toY(5));
+      ctx.lineTo(toX(c), toY(9));
+      ctx.stroke();
+    }
+  }
+
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#5c3a1e';
+  ctx.beginPath();
+  ctx.moveTo(toX(3), toY(0)); ctx.lineTo(toX(5), toY(2));
+  ctx.moveTo(toX(5), toY(0)); ctx.lineTo(toX(3), toY(2));
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(toX(3), toY(7)); ctx.lineTo(toX(5), toY(9));
+  ctx.moveTo(toX(5), toY(7)); ctx.lineTo(toX(3), toY(9));
+  ctx.stroke();
+
+  ctx.font = 'bold 24px "KaiTi", "STKaiti", "SimSun", serif';
+  ctx.fillStyle = '#5c3a1e';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  const riverY = (toY(4) + toY(5)) / 2;
+  ctx.fillText('楚 河', toX(2), riverY);
+  ctx.fillText('汉 界', toX(6), riverY);
+
+  drawCrossMarks();
+}
+
+function drawCrossMarks() {
+  const pts = [
+    [2,1, true,true,true,true], [2,7, true,true,true,true],
+    [7,1, true,true,true,true], [7,7, true,true,true,true],
+    [3,0, false,true,true,true], [3,2, true,true,true,true], [3,4, true,true,true,true], [3,6, true,true,true,true], [3,8, true,false,true,true],
+    [6,0, false,true,true,true], [6,2, true,true,true,true], [6,4, true,true,true,true], [6,6, true,true,true,true], [6,8, true,false,true,true],
+  ];
+
+  const gap = 4;
+  const len = 10;
+
+  ctx.strokeStyle = '#5c3a1e';
+  ctx.lineWidth = 1.2;
+
+  for (const [r, c, left, right, up, down] of pts) {
+    const x = toX(c), y = toY(r);
+    if (left) { ctx.beginPath(); ctx.moveTo(x - gap, y); ctx.lineTo(x - gap - len, y); ctx.stroke(); }
+    if (right) { ctx.beginPath(); ctx.moveTo(x + gap, y); ctx.lineTo(x + gap + len, y); ctx.stroke(); }
+    if (up) { ctx.beginPath(); ctx.moveTo(x, y - gap); ctx.lineTo(x, y - gap - len); ctx.stroke(); }
+    if (down) { ctx.beginPath(); ctx.moveTo(x, y + gap); ctx.lineTo(x, y + gap + len); ctx.stroke(); }
+  }
+}
+
+function drawPieces() {
+  const now = Date.now();
+  let animating = false;
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const p = board[r][c];
+      if (!p) continue;
+      const x = toX(c), y = toY(r);
+      const isRed = p.color === COLOR.RED;
+      let pieceY = y;
+      let scale = 1;
+
+      // Selected piece: lift up and enlarge
+      const isSelected = selected && selected.row === r && selected.col === c;
+      if (isSelected) {
+        pieceY = y - 8;
+        scale = 1.12;
+        // Drop shadow on the board (hovering effect)
+        ctx.save();
+        ctx.globalAlpha = 0.25;
+        ctx.beginPath();
+        ctx.ellipse(x, y + 2, PIECE_R * 0.7, 5, 0, 0, 2 * Math.PI);
+        ctx.fillStyle = '#000';
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Landing animation: squash on touch-down (200ms)
+      if (landingAnim && landingAnim.row === r && landingAnim.col === c) {
+        const dt = now - landingAnim.startTime;
+        if (dt < 200) {
+          const t = dt / 200;
+          const squash = 1 - Math.sin(t * Math.PI) * 0.15;
+          scale *= squash;
+          animating = true;
+        } else {
+          landingAnim = null;
+        }
+      }
+
+      ctx.save();
+      ctx.translate(x, pieceY);
+      ctx.scale(scale, scale);
+      ctx.translate(-x, -pieceY);
+
+      // Shadow
+      ctx.beginPath();
+      ctx.arc(x + 2, pieceY + 3, PIECE_R, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fill();
+
+      // Piece body
+      const grad = ctx.createRadialGradient(x - 5, pieceY - 5, 2, x, pieceY, PIECE_R);
+      grad.addColorStop(0, '#fff8e7');
+      grad.addColorStop(0.7, '#e8d5b7');
+      grad.addColorStop(1, '#c4a882');
+      ctx.beginPath();
+      ctx.arc(x, pieceY, PIECE_R, 0, 2 * Math.PI);
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Outer ring
+      ctx.strokeStyle = isRed ? '#c0392b' : '#2c3e50';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Inner ring
+      ctx.beginPath();
+      ctx.arc(x, pieceY, PIECE_R - 5, 0, 2 * Math.PI);
+      ctx.strokeStyle = isRed ? '#c0392b' : '#2c3e50';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Character
+      ctx.font = `bold ${PIECE_R > 22 ? 20 : 16}px "KaiTi", "STKaiti", "SimSun", "Microsoft YaHei", serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = isRed ? '#c0392b' : '#1a1a2e';
+      ctx.fillText(p.char, x, pieceY + 1);
+
+      ctx.restore();
+    }
+  }
+
+  if (animating) requestAnimationFrame(render);
+}
+
+function drawSelection() {
+  // Valid move indicators only (selected piece itself is visually lifted in drawPieces)
+  for (const m of validMoves) {
+    const mx = toX(m.toC), my = toY(m.toR);
+    const target = board[m.toR][m.toC];
+    if (target) {
+      ctx.beginPath();
+      ctx.arc(mx, my, PIECE_R + 3, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'rgba(231, 76, 60, 0.7)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(mx, my, PIECE_R + 1, 0, 2 * Math.PI);
+      ctx.strokeStyle = 'rgba(231, 76, 60, 0.3)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(mx, my, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(46, 204, 113, 0.5)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(46, 204, 113, 0.8)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+  }
+}
+
+// ============ EVENT HANDLING ============
+canvas.addEventListener('click', (e) => {
+  if (aiThinking) return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const mx = (e.clientX - rect.left) * scaleX;
+  const my = (e.clientY - rect.top) * scaleY;
+  const pos = fromXY(mx, my);
+  if (pos) handleClick(pos.row, pos.col);
+});
+
+document.querySelectorAll('#modeGroup button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (aiThinking) return;
+    document.querySelectorAll('#modeGroup button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    gameMode = btn.dataset.mode;
+    document.getElementById('diffGroup').style.display = gameMode === 'pve' ? 'flex' : 'none';
+    document.querySelectorAll('.status .highlight').forEach(el => el.style.display = gameMode === 'pve' ? 'none' : '');
+    resetGame();
+  });
+});
+
+document.querySelectorAll('#diffGroup button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (aiThinking) return;
+    document.querySelectorAll('#diffGroup button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    difficulty = btn.dataset.diff;
+    resetGame();
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+    e.preventDefault();
+    undoMove();
+  }
+});
+
+// ============ START ============
+function initBoard() {
+  board = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+  const b = COLOR.BLACK, r = COLOR.RED;
+
+  const blackBack = ['chariot','horse','elephant','advisor','general','advisor','elephant','horse','chariot'];
+  blackBack.forEach((t, c) => board[0][c] = createPiece(t, b));
+  board[2][1] = createPiece('cannon', b);
+  board[2][7] = createPiece('cannon', b);
+  for (let c = 0; c <= 8; c += 2) board[3][c] = createPiece('soldier', b);
+
+  const redBack = ['chariot','horse','elephant','advisor','general','advisor','elephant','horse','chariot'];
+  redBack.forEach((t, c) => board[9][c] = createPiece(t, r));
+  board[7][1] = createPiece('cannon', r);
+  board[7][7] = createPiece('cannon', r);
+  for (let c = 0; c <= 8; c += 2) board[6][c] = createPiece('soldier', r);
+}
+
+function createPiece(type, color) {
+  return { type, color, char: PIECE_CHARS[color][type] };
+}
+
+resetGame();
+</script>
+</body>
+</html>

@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>江楷煜 · AIGC设计师作品集</title>
+<style>
+  /* ============ RESET & BASE ============ */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  @font-face {
+    font-family: 'PaperCut';
+    src: local('STKaiti'), local('KaiTi'), local('FangSong'), local('SimSun');
+  }
+
+  :root {
+    --paper-red: #C41E3A;
+    --paper-dark-red: #8B1A2B;
+    --paper-cream: #FFF8EC;
+    --paper-beige: #F5E0C3;
+    --paper-warm: #FFF0D5;
+    --youth-blue: #4A8FCC;
+    --campus-green: #5BA87B;
+    --text-dark: #3D2B1F;
+    --text-mid: #6B5344;
+    --text-light: #9B8070;
+    --shadow-cut: 0 2px 0 #D4C4A8, 0 4px 8px rgba(139,26,43,0.12), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-layer: 0 1px 0 #E8DCC8, 0 3px 0 #DDCFB4, 0 4px 12px rgba(139,26,43,0.10);
+    --shadow-card: 0 2px 0 #DDCFB4, 0 6px 16px rgba(0,0,0,0.08);
+    --border-paper: 2px solid #E0D0B8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #FDF6E8;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(196,30,58,0.03) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(74,143,204,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(91,168,123,0.03) 0%, transparent 50%);
+    color: var(--text-dark);
+    font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", -apple-system, sans-serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ============ PAPER TEXTURE OVERLAY ============ */
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+    background:
+      repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(180,160,130,0.015) 2px, rgba(180,160,130,0.015) 4px),
+      repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(180,160,130,0.01) 40px, rgba(180,160,130,0.01) 41px);
+  }
+
+  /* ============ PAPER CUT DECORATIVE HEADER ============ */
+  .paper-cut-border {
+    width: 100%; height: 18px;
+    background: var(--paper-red);
+    position: relative;
+    z-index: 1;
+    /* Paper cut scallop pattern */
+    -webkit-mask-image: repeating-linear-gradient(
+      90deg,
+      transparent, transparent 6px,
+      #000 6px, #000 8px,
+      transparent 8px, transparent 18px,
+      #000 18px, #000 20px,
+      transparent 20px, transparent 30px
+    );
+    mask-image: repeating-linear-gradient(
+      90deg,
+      transparent, transparent 6px,
+      #000 6px, #000 8px,
+      transparent 8px, transparent 18px,
+      #000 18px, #000 20px,
+      transparent 20px, transparent 30px
+    );
+  }
+  .paper-cut-border.bottom {
+    background: var(--paper-dark-red);
+    transform: rotate(180deg);
+  }
+
+  /* ============ CONTAINER ============ */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ============ NAVIGATION ============ */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(253,246,232,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #E8D8C0;
+    padding: 10px 0;
+    margin-bottom: 32px;
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto; padding: 0 24px;
+    display: flex; gap: 20px; flex-wrap: wrap;
+    justify-content: center; align-items: center;
+  }
+  .nav a {
+    text-decoration: none; color: var(--text-mid);
+    font-size: 14px; font-weight: 500;
+    padding: 4px 10px; border-radius: 4px;
+    transition: all 0.25s;
+    position: relative;
+  }
+  .nav a::after {
+    content: '';
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 0; height: 2px; background: var(--paper-red);
+    transition: width 0.25s;
+  }
+  .nav a:hover { color: var(--paper-red); }
+  .nav a:hover::after { width: 70%; }
+
+  /* ============ HERO ============ */
+  .hero {
+    text-align: center; padding: 48px 24px 36px;
+    position: relative;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: var(--paper-red); color: #fff;
+    padding: 5px 18px; border-radius: 2px;
+    font-size: 13px; letter-spacing: 4px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 0 var(--paper-dark-red), 0 4px 12px rgba(139,26,43,0.2);
+    transform: rotate(-1deg);
+  }
+  .hero h1 {
+    font-family: 'PaperCut', 'STKaiti', 'KaiTi', serif;
+    font-size: 52px; color: var(--paper-dark-red);
+    letter-spacing: 6px; margin-bottom: 8px;
+    text-shadow: 1px 1px 0 rgba(196,30,58,0.1);
+  }
+  .hero .subtitle {
+    font-size: 18px; color: var(--text-mid);
+    letter-spacing: 2px; margin-bottom: 28px;
+    font-weight: 300;
+  }
+  .hero-tags {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    justify-content: center; margin-bottom: 36px;
+  }
+  .hero-tags span {
+    padding: 6px 16px; border-radius: 20px;
+    font-size: 13px; letter-spacing: 1px;
+    border: 1.5px solid #D4C0A0;
+    background: var(--paper-cream);
+    color: var(--text-mid);
+    box-shadow: var(--shadow-cut);
+  }
+
+  /* ============ FEATURED VIDEO ============ */
+  .featured-video {
+    position: relative;
+    max-width: 800px; margin: 0 auto 16px;
+    background: #F5E6CC;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: var(--shadow-layer);
+    border: var(--border-paper);
+  }
+  .featured-video::before {
+    content: '🎬 精选作品集';
+    display: block;
+    font-size: 15px; font-weight: 600;
+    color: var(--paper-dark-red);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    padding-left: 4px;
+  }
+  .featured-video video {
+    width: 100%; border-radius: 4px;
+    display: block; background: #000;
+  }
+  .featured-video .video-hint {
+    text-align: center; font-size: 12px;
+    color: var(--text-light); margin-top: 8px;
+    letter-spacing: 1px;
+  }
+
+  /* ============ SECTION TITLES ============ */
+  .section {
+    padding: 48px 0;
+    position: relative;
+  }
+  .section-title {
+    text-align: center; margin-bottom: 40px;
+    position: relative;
+  }
+  .section-title .cn {
+    font-family: 'PaperCut', 'STKaiti', 'KaiTi', serif;
+    font-size: 32px; color: var(--paper-dark-red);
+    letter-spacing: 4px; display: block;
+  }
+  .section-title .en {
+    font-size: 12px; color: var(--text-light);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-top: 4px; display: block;
+  }
+  .section-title::after {
+    content: '';
+    display: block; width: 50px; height: 3px;
+    background: var(--paper-red);
+    margin: 12px auto 0;
+    /* Paper-cut zigzag */
+    -webkit-mask-image: repeating-linear-gradient(90deg, #000 0, #000 6px, transparent 6px, transparent 10px);
+    mask-image: repeating-linear-gradient(90deg, #000 0, #000 6px, transparent 6px, transparent 10px);
+  }
+
+  /* ============ CARDS ============ */
+  .card {
+    background: var(--paper-cream);
+    border-radius: 6px;
+    padding: 28px;
+    box-shadow: var(--shadow-card);
+    border: var(--border-paper);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 0 #DDCFB4, 0 10px 24px rgba(0,0,0,0.10);
+  }
+
+  /* ============ VIDEO GRID ============ */
+  .video-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .video-card {
+    background: var(--paper-cream);
+    border-radius: 8px; overflow: hidden;
+    box-shadow: var(--shadow-card);
+    border: var(--border-paper);
+    transition: all 0.25s;
+    max-width: 320px;
+    justify-self: center;
+    width: 100%;
+  }
+  .video-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 0 #DDCFB4, 0 12px 28px rgba(0,0,0,0.12);
+  }
+  .video-card video {
+    width: 100%; display: block;
+    background: #1a1a1a;
+    max-height: 480px;
+  }
+  .video-card .info {
+    padding: 16px 18px;
+  }
+  .video-card .info h4 {
+    font-size: 16px; color: var(--paper-dark-red);
+    margin-bottom: 4px; letter-spacing: 1px;
+  }
+  .video-card .info .tag {
+    display: inline-block;
+    font-size: 11px; padding: 3px 10px;
+    border-radius: 12px; letter-spacing: 1px;
+    margin-right: 6px; margin-top: 4px;
+  }
+  .tag-ai { background: #FFE0E6; color: #C41E3A; }
+  .tag-blockchain { background: #E0F0FF; color: #2B5F8A; }
+  .tag-video { background: #E8F5E0; color: #4A7C3F; }
+  .tag-drama { background: #FFF0E0; color: #B8702A; }
+  .tag-design { background: #F0E0FF; color: #6B3FA0; }
+
+  /* ============ POSTER GALLERY ============ */
+  .poster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+  }
+  .poster-item {
+    border-radius: 6px; overflow: hidden;
+    background: var(--paper-warm);
+    box-shadow: var(--shadow-cut);
+    border: var(--border-paper);
+    transition: all 0.3s;
+  }
+  .poster-item:hover {
+    transform: scale(1.03);
+    box-shadow: var(--shadow-layer);
+  }
+  .poster-item img {
+    width: 100%; height: auto; display: block;
+    object-fit: contain;
+  }
+  .poster-item .label {
+    padding: 10px 12px; font-size: 13px;
+    color: var(--text-mid); text-align: center;
+    letter-spacing: 1px;
+  }
+
+  /* Style section tabs */
+  .style-tabs {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center; margin-bottom: 28px;
+  }
+  .style-tab {
+    padding: 7px 18px; border-radius: 20px;
+    font-size: 13px; cursor: pointer; letter-spacing: 1px;
+    background: var(--paper-cream);
+    border: 1.5px solid #D4C0A0;
+    color: var(--text-mid);
+    transition: all 0.25s;
+  }
+  .style-tab:hover, .style-tab.active {
+    background: var(--paper-red);
+    color: #fff; border-color: var(--paper-red);
+    box-shadow: 0 2px 0 var(--paper-dark-red);
+  }
+
+  /* ============ TWO COLUMN ============ */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ============ EXPERIENCE ============ */
+  .exp-card {
+    background: var(--paper-cream);
+    border-radius: 8px; padding: 28px;
+    box-shadow: var(--shadow-layer);
+    border: var(--border-paper);
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .exp-card::before {
+    content: '';
+    position: absolute; left: -1px; top: 20px; bottom: 20px;
+    width: 4px; background: var(--paper-red);
+    border-radius: 0 2px 2px 0;
+  }
+  .exp-card .company {
+    font-family: 'PaperCut', 'STKaiti', 'KaiTi', serif;
+    font-size: 22px; color: var(--paper-dark-red);
+    letter-spacing: 2px;
+  }
+  .exp-card .role {
+    font-size: 14px; color: var(--text-mid);
+    margin-bottom: 12px; letter-spacing: 1px;
+  }
+  .exp-card .period {
+    font-size: 12px; color: var(--text-light);
+    margin-bottom: 14px;
+  }
+  .exp-card ul {
+    list-style: none; padding-left: 0;
+  }
+  .exp-card ul li {
+    position: relative; padding-left: 20px;
+    margin-bottom: 8px; font-size: 14px;
+    color: var(--text-mid); line-height: 1.7;
+  }
+  .exp-card ul li::before {
+    content: '◆';
+    position: absolute; left: 0; top: 0;
+    font-size: 8px; color: var(--paper-red);
+  }
+
+  /* ============ FEATURED PROJECT ============ */
+  .project-showcase {
+    background: var(--paper-cream);
+    border-radius: 12px; overflow: hidden;
+    box-shadow: var(--shadow-layer);
+    border: var(--border-paper);
+    margin-bottom: 24px;
+  }
+  .project-showcase .preview {
+    background: #1a1a2e; padding: 16px;
+    text-align: center;
+  }
+  .project-showcase .preview img {
+    max-width: 100%; border-radius: 4px;
+  }
+  .project-showcase .desc {
+    padding: 20px 24px;
+  }
+  .project-showcase .desc h3 {
+    font-family: 'PaperCut', 'STKaiti', 'KaiTi', serif;
+    font-size: 20px; color: var(--paper-dark-red);
+    letter-spacing: 2px; margin-bottom: 8px;
+  }
+  .project-showcase .desc p {
+    font-size: 14px; color: var(--text-mid);
+  }
+
+  /* ============ FOOTER ============ */
+  .footer {
+    text-align: center; padding: 40px 24px 32px;
+    background: var(--paper-dark-red); color: #F5E0C3;
+    margin-top: 48px; position: relative; z-index: 1;
+  }
+  .footer h3 {
+    font-family: 'PaperCut', 'STKaiti', 'KaiTi', serif;
+    font-size: 24px; letter-spacing: 4px;
+    margin-bottom: 12px;
+  }
+  .footer p { font-size: 14px; opacity: 0.85; letter-spacing: 1px; }
+  .footer .contact-row {
+    display: flex; gap: 24px; flex-wrap: wrap;
+    justify-content: center; margin-top: 16px;
+  }
+  .footer .contact-item {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 14px; opacity: 0.9;
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 36px; letter-spacing: 3px; }
+    .video-grid { grid-template-columns: 1fr; }
+    .poster-grid { grid-template-columns: repeat(2, 1fr); }
+    .nav-inner { gap: 8px; }
+    .nav a { font-size: 12px; padding: 3px 6px; }
+    .section { padding: 28px 0; }
+  }
+
+  /* ============ SCROLL TO TOP ============ */
+  .back-top {
+    position: fixed; bottom: 30px; right: 30px; z-index: 99;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--paper-red); color: #fff;
+    border: none; cursor: pointer; font-size: 20px;
+    box-shadow: 0 3px 12px rgba(139,26,43,0.3);
+    transition: all 0.3s; opacity: 0; visibility: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .back-top.visible { opacity: 1; visibility: visible; }
+  .back-top:hover { background: var(--paper-dark-red); transform: translateY(-2px); }
+</style>
+</head>
+<body>
+
+<!-- Paper cut decorative top -->
+<div class="paper-cut-border"></div>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#hero">🏠 首页</a>
+    <a href="#videos">🎬 视频作品</a>
+    <a href="#design">🎨 AI设计</a>
+    <a href="#blockchain">⛓️ 区块链</a>
+    <a href="#projects">💻 项目</a>
+    <a href="#experience">📋 经历</a>
+    <a href="#contact">📮 联系</a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-badge">AIGC DESIGNER</div>
+    <h1>江楷煜</h1>
+    <p class="subtitle">AI生成内容设计师 · 新媒体运营 · 视频创作</p>
+    <div class="hero-tags">
+      <span>🤖 AI设计</span>
+      <span>🎞️ 视频制作</span>
+      <span>⛓️ 区块链内容</span>
+      <span>🎨 多风格视觉</span>
+      <span>📱 抖音运营</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIDEO WORKS ============ -->
+<section class="section" id="videos">
+  <div class="container">
+    <div class="section-title">
+      <span class="cn">视频作品</span>
+      <span class="en">Video Portfolio</span>
+    </div>
+
+    <!-- AI政务宣传视频 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:20px; color:var(--paper-dark-red); margin-bottom:16px; letter-spacing:2px;">
+      🏛️ AI政务宣传视频 <span style="font-size:13px; color:var(--text-light);">— 电视台实习</span>
+    </h3>
+    <div class="video-grid" style="margin-bottom:36px;">
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(4).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>AI政务宣传 · 一</h4>
+          <span class="tag tag-ai">AI生成</span>
+          <span class="tag tag-video">政务宣传</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(5).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>AI政务宣传 · 二</h4>
+          <span class="tag tag-ai">AI生成</span>
+          <span class="tag tag-video">政务宣传</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(6).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>AI政务宣传 · 三</h4>
+          <span class="tag tag-ai">AI生成</span>
+          <span class="tag tag-video">政务宣传</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(19).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>AI政务宣传 · 四</h4>
+          <span class="tag tag-ai">AI生成</span>
+          <span class="tag tag-video">政务宣传</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI练手作品 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:20px; color:var(--paper-dark-red); margin-bottom:16px; letter-spacing:2px;">
+      🤖 AI创作练手 <span style="font-size:13px; color:var(--text-light);">— 个人探索</span>
+    </h3>
+    <div class="video-grid" style="margin-bottom:36px;">
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(1).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>AI创作作品 · 一</h4>
+          <span class="tag tag-ai">AI生成</span>
+          <span class="tag tag-design">创意设计</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(3).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>AI创作作品 · 二</h4>
+          <span class="tag tag-ai">AI生成</span>
+          <span class="tag tag-design">创意设计</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 视频广告 · 区块链海报串联 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:20px; color:var(--paper-dark-red); margin-bottom:16px; letter-spacing:2px;">
+      📢 视频广告 <span style="font-size:13px; color:var(--text-light);">— 区块链海报串联</span>
+    </h3>
+    <div class="video-grid" style="margin-bottom:36px;">
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(14).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链广告 · 一</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-design">海报串联</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(16).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链广告 · 二</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-design">海报串联</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(17).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链广告 · 三</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-design">海报串联</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(18).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链广告 · 四</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-design">海报串联</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 短剧 & 剪辑 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:20px; color:var(--paper-dark-red); margin-bottom:16px; letter-spacing:2px;">
+      🎭 短剧 & 剪辑 <span style="font-size:13px; color:var(--text-light);">— 影视试岗</span>
+    </h3>
+    <div class="video-grid">
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(2).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>短剧公司作品</h4>
+          <span class="tag tag-drama">短剧</span>
+          <span class="tag tag-video">影视制作</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(15).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>剪辑练手作品</h4>
+          <span class="tag tag-video">剪辑</span>
+          <span class="tag tag-design">练习</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AI DESIGN WORKS ============ -->
+<section class="section" id="design">
+  <div class="container">
+    <div class="section-title">
+      <span class="cn">AI设计作品</span>
+      <span class="en">AI-Generated Design</span>
+    </div>
+
+    <p style="text-align:center; color:var(--text-mid); margin-bottom:24px; font-size:14px; letter-spacing:1px;">
+      通过AI工具进行多风格海报设计探索，展示公链产品的不同视觉表达方案<br>
+      涵盖 12 种风格方向，每套方案 4 张系列海报
+    </p>
+
+    <div class="style-tabs" id="styleTabs">
+      <button class="style-tab active" data-style="剪纸风格">✂️ 剪纸风格</button>
+      <button class="style-tab" data-style="像素风格">👾 像素风格</button>
+      <button class="style-tab" data-style="蒸汽波风格">🌊 蒸汽波</button>
+      <button class="style-tab" data-style="蒸汽朋克风格">⚙️ 蒸汽朋克</button>
+      <button class="style-tab" data-style="曼陀罗红和奢金">🌸 曼陀罗红·奢金</button>
+      <button class="style-tab" data-style="黑红方案">❤️ 黑红方案</button>
+      <button class="style-tab" data-style="蓝白方案">💙 蓝白方案</button>
+      <button class="style-tab" data-style="蓝紫方案">💜 蓝紫方案</button>
+      <button class="style-tab" data-style="绿色方案">💚 绿色方案</button>
+      <button class="style-tab" data-style="驼色与乌黑">🤎 驼色·乌黑</button>
+      <button class="style-tab" data-style="黑棕方案">🖤 黑棕方案</button>
+      <button class="style-tab" data-style="gemini">🧠 Gemini生成</button>
+    </div>
+
+    <div class="poster-grid" id="posterGrid">
+      <!-- Dynamically filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ BLOCKCHAIN CONTENT ============ -->
+<section class="section" id="blockchain">
+  <div class="container">
+    <div class="section-title">
+      <span class="cn">区块链新媒体运营</span>
+      <span class="en">Blockchain Content · Douyin</span>
+    </div>
+
+    <p style="text-align:center; color:var(--text-mid); margin-bottom:24px; font-size:14px; letter-spacing:1px;">
+      广卓实习期间运营抖音账号，策划并制作区块链科普系列视频
+    </p>
+
+    <div class="video-grid">
+      <div class="video-card">
+        <video controls preload="metadata" poster="区块链萌宠/区块链萌宠-封面.jpg">
+          <source src="区块链萌宠/区块链萌宠.mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链萌宠</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-ai">AI科普</span>
+          <p style="font-size:12px; color:var(--text-light); margin-top:6px;">以萌宠形象讲解区块链概念，趣味科普系列</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata" poster="智能合约/智能合约-封面.jpg">
+          <source src="智能合约/智能合约.mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>智能合约</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-ai">技术科普</span>
+          <p style="font-size:12px; color:var(--text-light); margin-top:6px;">智能合约原理与应用场景解析</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata" poster="稳定币/ChatGPT Image 2026年6月2日 16_09_42.png">
+          <source src="稳定币/稳定币.mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>稳定币</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-ai">金融科普</span>
+          <p style="font-size:12px; color:var(--text-light); margin-top:6px;">稳定币机制设计与市场分析</p>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata" poster="挖矿/ChatGPT Image 2026年6月5日 13_15_27.png">
+          <source src="挖矿/挖矿.mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>挖矿</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-ai">技术科普</span>
+          <p style="font-size:12px; color:var(--text-light); margin-top:6px;">加密货币挖矿原理与产业链解析</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="section" id="projects">
+  <div class="container">
+    <div class="section-title">
+      <span class="cn">项目作品</span>
+      <span class="en">Projects</span>
+    </div>
+
+    <!-- Chinese Chess -->
+    <div class="project-showcase">
+      <div class="preview" style="background: linear-gradient(135deg, #1a1a2e, #2d2d44); padding: 40px 20px; text-align: center;">
+        <span style="font-size:64px;">♚</span>
+        <p style="color:#e8d5b7; font-size:18px; letter-spacing:3px; margin-top:8px;">中国象棋</p>
+        <p style="color:#b0b0d0; font-size:12px; margin-top:4px;">交互式网页游戏</p>
+      </div>
+      <div class="desc">
+        <h3>♟️ 中国象棋 · 网页版</h3>
+        <p>
+          使用 HTML5 Canvas 开发的中国象棋交互游戏。支持<strong>人人对决</strong>和<strong>人机对决</strong>两种模式，
+          内置三级难度AI（困难/炼狱/地狱），包含走棋记录、悔棋、棋局状态显示等完整功能。
+          纯前端实现，无需任何后端服务。
+        </p>
+        <a href="中国象棋.html" target="_blank" style="display:inline-block; margin-top:12px; padding:8px 20px; background:var(--paper-red); color:#fff; text-decoration:none; border-radius:4px; font-size:14px; letter-spacing:1px;">
+          🎮 打开试玩
+        </a>
+      </div>
+    </div>
+
+    <!-- Company Logo Wall -->
+    <div class="project-showcase">
+      <div class="desc" style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:250px;">
+          <img src="公司logo墙.png" alt="公司Logo墙" style="width:100%; border-radius:4px; box-shadow:var(--shadow-cut);" loading="lazy">
+        </div>
+        <div style="flex:1; min-width:250px;">
+          <h3>🏢 公司Logo墙设计</h3>
+          <p style="font-size:14px; color:var(--text-mid); margin-top:8px;">
+            为区块链企业设计的品牌Logo展示墙，体现企业技术实力与合作生态。
+            采用扁平化风格，兼顾正式感与科技感。
+          </p>
+          <span class="tag tag-design" style="margin-top:8px;">品牌设计</span>
+          <span class="tag tag-blockchain" style="margin-top:8px;">区块链</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPERIENCE ============ -->
+<section class="section" id="experience">
+  <div class="container">
+    <div class="section-title">
+      <span class="cn">教育 & 经历</span>
+      <span class="en">Education & Experience</span>
+    </div>
+
+    <!-- 教育背景 -->
+    <div class="exp-card" style="margin-bottom:24px;">
+      <div class="company">🎓 茂名职业技术学院</div>
+      <div class="role">传播与策划专业 <span style="font-size:12px; color:var(--text-light);">| 2023.09 - 2026.06</span></div>
+      <p style="font-size:13px; color:var(--text-mid); margin-top:8px;">
+        科班策划背景，具备"策划+技术"双向能力。掌握新媒体运营、活动策划及剪映、PS、虚幻引擎5、PR等工具，并深度进阶AIGC多模态内容产出、大模型应用与工作流搭建、Vibe Coding（AI辅助编程）等前沿技术。
+      </p>
+    </div>
+
+    <!-- 校园经历 -->
+    <div class="exp-card" style="margin-bottom:24px;">
+      <div class="company">🎭 院级艺术团副主席</div>
+      <div class="role">茂名职业技术学院 <span style="font-size:12px; color:var(--text-light);">| 2024.10 - 2025.10</span></div>
+      <ul>
+        <li>统筹艺术团运营：负责成员招募培训、场地物资协调及节目资源对接</li>
+        <li>牵头策划迎新晚会等院级活动，统筹20+人执行，覆盖500+师生，参与率85%</li>
+      </ul>
+    </div>
+
+    <!-- 实习经历标题 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:22px; color:var(--paper-dark-red); margin:28px 0 18px; letter-spacing:2px; text-align:center;">
+      💼 实习经历
+    </h3>
+
+    <div class="two-col">
+      <!-- 广卓 -->
+      <div class="exp-card">
+        <div class="company">广卓天晟（广州）网络科技有限责任公司</div>
+        <div class="role">AI内容运营 <span style="font-size:12px; color:var(--text-light);">| 2026.05 - 2026.06</span></div>
+        <ul>
+          <li><strong>AI视觉设计：</strong>通过优化提示词与工作流，针对区块链业务高效产出12套视觉资产（共48张海报）并重组为视频广告</li>
+          <li><strong>品牌设计交付：</strong>利用AI独立完成公司实体LOGO墙的设计与视觉交付</li>
+          <li><strong>Vibe Coding实践：</strong>深度实践AI辅助编程，利用Claude Code及GPT系列大模型开展辅助编程，探索AI在复杂创意生产中的应用</li>
+          <li><strong>全自动短视频链路：</strong>围绕公链及钱包等Web3.0业务，搭建"文案→脚本→分镜→多模态生成"的AI视频生产链路，赋能科普账号高频输出</li>
+        </ul>
+      </div>
+
+      <!-- 电视台 -->
+      <div class="exp-card">
+        <div class="company">揭阳广播电视台</div>
+        <div class="role">融媒体中心 <span style="font-size:12px; color:var(--text-light);">| 2026.01 - 2026.03</span></div>
+        <ul>
+          <li>负责社会主义核心价值观宣传视频的<strong>AI生成与修改优化</strong></li>
+          <li>参与揭阳古城风貌、人文关怀类拍摄策划，完成灯光设备架设与P3设备操作</li>
+          <li>承担揭阳市第七届人大第八次会议代表通道<strong>全景拍摄</strong>工作</li>
+          <li>协助团队完成现场执行、素材整理等相关工作</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 项目经历 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:20px; color:var(--paper-dark-red); margin:28px 0 16px; letter-spacing:2px; text-align:center;">
+      🎯 项目 & 试岗经历
+    </h3>
+    <div class="exp-card">
+      <div class="company">昇格传媒</div>
+      <div class="role">短剧制作 · 全流程试岗</div>
+      <ul>
+        <li>参与短剧制作全流程：编写脚本、制作人设图、AI生成视频素材、后期剪辑</li>
+        <li>全流程与广卓AI视频链路相似，积累了从创意到成片的完整经验</li>
+      </ul>
+    </div>
+    <div class="exp-card">
+      <div class="company">柒零两佰</div>
+      <div class="role">游戏公司 · AI视觉设计试岗</div>
+      <ul>
+        <li>根据甲方需求，利用AI生成游戏场景图、宣传海报等视觉素材</li>
+        <li>根据脚本生成AI宣传视频，满足游戏推广需求</li>
+      </ul>
+    </div>
+
+    <!-- 技能证书 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:20px; color:var(--paper-dark-red); margin:28px 0 16px; letter-spacing:2px; text-align:center;">
+      📜 技能 & 证书
+    </h3>
+    <div class="card" style="text-align:center;">
+      <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+        <!-- AI核心技能 -->
+        <span style="font-size:13px; padding:6px 14px; background:var(--paper-red); border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(196,30,58,0.3);">AIGC多模态产出</span>
+        <span style="font-size:13px; padding:6px 14px; background:var(--paper-dark-red); border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(139,26,43,0.3);">大模型应用</span>
+        <span style="font-size:13px; padding:6px 14px; background:#6B3FA0; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(107,63,160,0.3);">Vibe Coding</span>
+        <span style="font-size:13px; padding:6px 14px; background:#2B5F8A; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(43,95,138,0.3);">Claude Code</span>
+        <span style="font-size:13px; padding:6px 14px; background:#4A7C3F; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(74,124,63,0.3);">GPT系列</span>
+        <!-- 工具技能 -->
+        <span style="font-size:13px; padding:6px 14px; background:#FFE0E6; border-radius:12px; color:#C41E3A; font-weight:600;">PS / PR / 剪映</span>
+        <span style="font-size:13px; padding:6px 14px; background:#D5E8FF; border-radius:12px; color:#1A4F7A; font-weight:600;">虚幻引擎5</span>
+        <!-- 证书 -->
+        <span style="font-size:13px; padding:6px 14px; background:#FFF0D5; border-radius:12px; color:#B8702A; font-weight:600;">自媒体运营（中级）</span>
+        <span style="font-size:13px; padding:6px 14px; background:#E8F5E0; border-radius:12px; color:#3D6B32; font-weight:600;">互联网营销师</span>
+        <span style="font-size:13px; padding:6px 14px; background:#F0E8FF; border-radius:12px; color:#5B3A8C; font-weight:600;">普通话等级证书</span>
+        <span style="font-size:13px; padding:6px 14px; background:#FFE8E0; border-radius:12px; color:#A0522D; font-weight:600;">轻型民用无人机驾驶证</span>
+        <span style="font-size:13px; padding:6px 14px; background:#E0F0F8; border-radius:12px; color:#2D6A7A; font-weight:600;">C1驾驶证</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER / CONTACT ============ -->
+<footer class="footer" id="contact">
+  <div class="paper-cut-border bottom" style="margin-bottom:32px;"></div>
+  <h3>江楷煜 · AIGC设计师</h3>
+  <p style="max-width:600px; margin:12px auto; font-size:13px; line-height:1.8; opacity:0.9;">
+    科班策划背景，持互联网营销师证。熟练使用PS、剪映等工具，进阶掌握AIGC视觉产出、大模型应用与Vibe Coding等前沿AI技能。兼具活动策划与多岗位实习经验；性格幽默开朗、亲和力强，执行力到位，能踏实高效推进工作。
+  </p>
+  <div class="contact-row">
+    <div class="contact-item">📧 1677232455@qq.com</div>
+    <div class="contact-item">📱 17827505146</div>
+    <div class="contact-item">📍 广东省揭阳市</div>
+  </div>
+  <p style="margin-top:20px; font-size:12px; opacity:0.6; letter-spacing:1px;">
+    © 2026 江楷煜作品集 · Powered by AI Creativity
+  </p>
+</footer>
+
+<!-- Scroll to top -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // ============ POSTER DATA ============
+  const posterData = {
+    '剪纸风格': [
+      '海报/剪纸风格/1.png', '海报/剪纸风格/2.png', '海报/剪纸风格/3.png', '海报/剪纸风格/4.png'
+    ],
+    '像素风格': [
+      '海报/像素风格/1.png', '海报/像素风格/2.png', '海报/像素风格/3.png', '海报/像素风格/4.png'
+    ],
+    '蒸汽波风格': [
+      '海报/蒸汽波风格/ChatGPT Image 2026年5月9日 14_49_16.png',
+      '海报/蒸汽波风格/ChatGPT Image 2026年5月9日 14_52_46.png',
+      '海报/蒸汽波风格/ChatGPT Image 2026年5月9日 14_55_51.png',
+      '海报/蒸汽波风格/ChatGPT Image 2026年5月9日 14_58_48.png'
+    ],
+    '蒸汽朋克风格': [
+      '海报/蒸汽朋克风格/ChatGPT Image 2026年5月9日 14_30_10.png',
+      '海报/蒸汽朋克风格/ChatGPT Image 2026年5月9日 14_33_48.png',
+      '海报/蒸汽朋克风格/ChatGPT Image 2026年5月9日 14_37_01.png',
+      '海报/蒸汽朋克风格/ChatGPT Image 2026年5月9日 14_40_11.png'
+    ],
+    '曼陀罗红和奢金': [
+      '海报/曼陀罗红和奢金/公链开发产品宣传图设计 (8).png',
+      '海报/曼陀罗红和奢金/公链开发产品宣传图设计 (9).png',
+      '海报/曼陀罗红和奢金/公链开发产品宣传图设计 (10).png',
+      '海报/曼陀罗红和奢金/公链开发产品宣传图设计 (11).png'
+    ],
+    '黑红方案': [
+      '海报/黑红方案/公链开发产品宣传图设计 1.png',
+      '海报/黑红方案/公链开发产品宣传图设计 2.png',
+      '海报/黑红方案/公链开发产品宣传图设计 3.png',
+      '海报/黑红方案/公链开发产品宣传图设计 4.png'
+    ],
+    '蓝白方案': [
+      '海报/蓝白方案/公链开发产品宣传图设计 (2).png',
+      '海报/蓝白方案/公链开发产品宣传图设计 (3).png',
+      '海报/蓝白方案/公链开发产品宣传图设计 (4).png',
+      '海报/蓝白方案/公链开发产品宣传图设计 (6).png'
+    ],
+    '蓝紫方案': [
+      '海报/蓝紫方案/公链开发产品宣传图设计 (3).png',
+      '海报/蓝紫方案/公链开发产品宣传图设计 (4).png',
+      '海报/蓝紫方案/公链开发产品宣传图设计 (5).png',
+      '海报/蓝紫方案/公链开发产品宣传图设计 (6).png'
+    ],
+    '绿色方案': [
+      '海报/绿色方案/公链开发产品宣传图设计 (3).png',
+      '海报/绿色方案/公链开发产品宣传图设计 (4).png',
+      '海报/绿色方案/公链开发产品宣传图设计 (5).png',
+      '海报/绿色方案/公链开发产品宣传图设计 (6).png'
+    ],
+    '驼色与乌黑': [
+      '海报/驼色与乌黑/公链开发产品宣传图设计 (3).png',
+      '海报/驼色与乌黑/公链开发产品宣传图设计 (4).png',
+      '海报/驼色与乌黑/公链开发产品宣传图设计 (6).png',
+      '海报/驼色与乌黑/公链开发产品宣传图设计 (7).png'
+    ],
+    '黑棕方案': [
+      '海报/黑棕方案/公链开发产品宣传图设计 (3).png',
+      '海报/黑棕方案/公链开发产品宣传图设计 (4).png',
+      '海报/黑棕方案/公链开发产品宣传图设计 (5).png',
+      '海报/黑棕方案/公链开发产品宣传图设计 (6).png'
+    ],
+    'gemini': [
+      '海报/gemini/Gemini_Generated_Image_xf3o31xf3o31xf3o (1).png',
+      '海报/gemini/Gemini_Generated_Image_xf3o31xf3o31xf3o (2).png',
+      '海报/gemini/Gemini_Generated_Image_xf3o31xf3o31xf3o (3).png',
+      '海报/gemini/Gemini_Generated_Image_xf3o31xf3o31xf3o (4).png'
+    ]
+  };
+
+  // ============ RENDER POSTERS ============
+  const posterGrid = document.getElementById('posterGrid');
+  const styleTabs = document.getElementById('styleTabs');
+  let currentStyle = '剪纸风格';
+
+  function renderPosters(style) {
+    const posters = posterData[style] || [];
+    posterGrid.innerHTML = posters.map((src, i) => `
+      <div class="poster-item">
+        <img src="${src}" alt="${style} - ${i+1}" loading="lazy" onerror="this.parentElement.style.display='none'">
+        <div class="label">${style} · ${i+1}</div>
+      </div>
+    `).join('');
+  }
+
+  styleTabs.addEventListener('click', (e) => {
+    if (e.target.classList.contains('style-tab')) {
+      document.querySelectorAll('.style-tab').forEach(t => t.classList.remove('active'));
+      e.target.classList.add('active');
+      currentStyle = e.target.dataset.style;
+      renderPosters(currentStyle);
+    }
+  });
+
+  // Initial render
+  renderPosters('剪纸风格');
+
+  // ============ SCROLL TO TOP BUTTON ============
+  const backTop = document.getElementById('backTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+      backTop.classList.add('visible');
+    } else {
+      backTop.classList.remove('visible');
+    }
+  });
+
+  // ============ SMOOTH SCROLL FOR NAV (fallback for older browsers) ============
+  document.querySelectorAll('.nav a[href^="#"]').forEach(link => {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
