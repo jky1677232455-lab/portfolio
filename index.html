@@ -233,6 +233,16 @@
     box-shadow: 0 3px 0 #DDCFB4, 0 10px 24px rgba(0,0,0,0.10);
   }
 
+  /* ============ VIDEO FLEX (for uneven rows) ============ */
+  .video-flex {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 20px; max-width: 1000px; margin: 0 auto;
+  }
+  .video-flex .video-card {
+    flex: 0 0 280px; max-width: 300px; width: auto;
+    justify-self: auto;
+  }
+
   /* ============ VIDEO GRID ============ */
   .video-grid {
     display: grid;
@@ -457,13 +467,13 @@
   <div class="nav-inner">
     <a href="#hero">🏠 首页</a>
     <a href="#videos">🎬 视频作品</a>
-    <a href="#design">🎨 AI设计</a>
-    <a href="#videoads">📢 广告</a>
-    <a href="#experience">📋 经历</a>
     <a href="#videochannel">📱 视频号</a>
     <a href="#blockchain">⛓️ 区块链</a>
-    <a href="#projects">💻 项目</a>
+    <a href="#design">🎨 AI设计</a>
+    <a href="#videoads">📢 广告</a>
     <a href="#moreworks">📦 更多</a>
+    <a href="#projects">💻 项目</a>
+    <a href="#experience">📋 经历</a>
     <a href="#contact">📮 联系</a>
   </div>
 </nav>
@@ -541,176 +551,6 @@
   </div>
 </section>
 
-<!-- ============ AI DESIGN WORKS ============ -->
-<section class="section" id="design">
-  <div class="container">
-    <div class="section-title">
-      <span class="cn">AI设计作品</span>
-      <span class="en">AI-Generated Design</span>
-    </div>
-
-    <p style="text-align:center; color:var(--text-mid); margin-bottom:24px; font-size:14px; letter-spacing:1px;">
-      通过AI工具进行多风格海报设计探索，展示公链产品的不同视觉表达方案<br>
-      涵盖 12 种风格方向，每套方案 4 张系列海报
-    </p>
-
-    <div class="style-tabs" id="styleTabs">
-      <button class="style-tab active" data-style="剪纸风格">✂️ 剪纸风格</button>
-      <button class="style-tab" data-style="像素风格">👾 像素风格</button>
-      <button class="style-tab" data-style="蒸汽波风格">🌊 蒸汽波</button>
-      <button class="style-tab" data-style="蒸汽朋克风格">⚙️ 蒸汽朋克</button>
-      <button class="style-tab" data-style="曼陀罗红和奢金">🌸 曼陀罗红·奢金</button>
-      <button class="style-tab" data-style="黑红方案">❤️ 黑红方案</button>
-      <button class="style-tab" data-style="蓝白方案">💙 蓝白方案</button>
-      <button class="style-tab" data-style="蓝紫方案">💜 蓝紫方案</button>
-      <button class="style-tab" data-style="绿色方案">💚 绿色方案</button>
-      <button class="style-tab" data-style="驼色与乌黑">🤎 驼色·乌黑</button>
-      <button class="style-tab" data-style="黑棕方案">🖤 黑棕方案</button>
-      <button class="style-tab" data-style="gemini">🧠 Gemini生成</button>
-    </div>
-
-    <div class="poster-grid" id="posterGrid">
-      <!-- Dynamically filled by JS -->
-    </div>
-  </div>
-</section>
-
-<!-- ============ 视频广告 ============ -->
-<section class="section" id="videoads">
-  <div class="container">
-    <div class="section-title">
-      <span class="cn">视频广告</span>
-      <span class="en">Video Ads · Blockchain</span>
-    </div>
-    <div class="video-grid">
-      <div class="video-card">
-        <video controls preload="metadata">
-          <source src="江楷煜以往作品集视频内容/video(14).mp4" type="video/mp4">
-        </video>
-        <div class="info">
-          <h4>区块链广告 · 一</h4>
-          <span class="tag tag-blockchain">区块链</span>
-          <span class="tag tag-design">海报串联</span>
-        </div>
-      </div>
-      <div class="video-card">
-        <video controls preload="metadata">
-          <source src="江楷煜以往作品集视频内容/video(16).mp4" type="video/mp4">
-        </video>
-        <div class="info">
-          <h4>区块链广告 · 二</h4>
-          <span class="tag tag-blockchain">区块链</span>
-          <span class="tag tag-design">海报串联</span>
-        </div>
-      </div>
-      <div class="video-card">
-        <video controls preload="metadata">
-          <source src="江楷煜以往作品集视频内容/video(17).mp4" type="video/mp4">
-        </video>
-        <div class="info">
-          <h4>区块链广告 · 三</h4>
-          <span class="tag tag-blockchain">区块链</span>
-          <span class="tag tag-design">海报串联</span>
-        </div>
-      </div>
-      <div class="video-card">
-        <video controls preload="metadata">
-          <source src="江楷煜以往作品集视频内容/video(18).mp4" type="video/mp4">
-        </video>
-        <div class="info">
-          <h4>区块链广告 · 四</h4>
-          <span class="tag tag-blockchain">区块链</span>
-          <span class="tag tag-design">海报串联</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============ EXPERIENCE ============ -->
-<section class="section" id="experience">
-  <div class="container">
-    <div class="section-title">
-      <span class="cn">教育 & 经历</span>
-      <span class="en">Education & Experience</span>
-    </div>
-
-    <!-- 教育背景 -->
-    <div class="exp-card" style="margin-bottom:24px;">
-      <div class="company">🎓 茂名职业技术学院</div>
-      <div class="role">传播与策划专业 <span style="font-size:12px; color:var(--text-light);">| 2023.09 - 2026.06</span></div>
-      <p style="font-size:13px; color:var(--text-mid); margin-top:8px;">
-        科班策划背景，具备"策划+技术"双向能力。掌握新媒体运营、活动策划及剪映、PS、虚幻引擎5、PR等工具，并深度进阶AIGC多模态内容产出、大模型应用与工作流搭建、Vibe Coding（AI辅助编程）等前沿技术。
-      </p>
-    </div>
-
-    <!-- 校园经历 -->
-    <div class="exp-card" style="margin-bottom:24px;">
-      <div class="company">🎭 院级艺术团副主席</div>
-      <div class="role">茂名职业技术学院 <span style="font-size:12px; color:var(--text-light);">| 2024.10 - 2025.10</span></div>
-      <ul>
-        <li>统筹艺术团运营：负责成员招募培训、场地物资协调及节目资源对接</li>
-        <li>牵头策划迎新晚会等院级活动，统筹20+人执行，覆盖500+师生，参与率85%</li>
-      </ul>
-    </div>
-
-    <!-- 实习经历标题 -->
-    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:22px; color:var(--paper-dark-red); margin:28px 0 18px; letter-spacing:2px; text-align:center;">
-      💼 实习经历
-    </h3>
-
-    <div class="two-col">
-      <!-- 广卓 -->
-      <div class="exp-card">
-        <div class="company">广卓天晟（广州）网络科技有限责任公司</div>
-        <div class="role">AI内容运营 <span style="font-size:12px; color:var(--text-light);">| 2026.05 - 2026.07</span></div>
-        <ul>
-          <li><strong>短视频账号0-1起号：</strong>两周内累计播放1,775次，获8关注、13点赞、均播时长28.12秒，完播率18.64%</li>
-          <li><strong>内容策划与制作：</strong>产出<strong>8条区块链科普动画</strong> + <strong>7条业务推广短剧</strong>，涵盖RWA、稳定币、挖矿等主题</li>
-          <li><strong>AI全链路生产：</strong>搭建"文案→脚本→分镜→AI生成→剪辑"全流程，熟练运用ChatGPT、Gemini、豆包等AI工具</li>
-          <li><strong>AI视觉设计：</strong>产出12套共48张多风格品牌海报，独立完成公司LOGO墙设计及交付</li>
-          <li><strong>Vibe Coding实践：</strong>深度使用Claude Code等AI智能体开展辅助编程，探索AI在复杂创意生产中的应用</li>
-        </ul>
-      </div>
-
-      <!-- 电视台 -->
-      <div class="exp-card">
-        <div class="company">揭阳广播电视台</div>
-        <div class="role">融媒体中心 <span style="font-size:12px; color:var(--text-light);">| 2026.01 - 2026.03</span></div>
-        <ul>
-          <li>具备AI政务视频全流程制作能力，<strong>累计制作6条、辅助修改6条</strong>AI宣传视频，<strong>11条在官方视频号发布上线</strong></li>
-          <li>独立完成揭阳市人大会议代表通道全景拍摄，素材被官方新闻采用</li>
-          <li>熟练操作灯光设备、P3等拍摄器材，能配合团队完成拍摄策划及现场执行</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- 技能证书 -->
-    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:20px; color:var(--paper-dark-red); margin:28px 0 16px; letter-spacing:2px; text-align:center;">
-      📜 技能 & 证书
-    </h3>
-    <div class="card" style="text-align:center;">
-      <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
-        <!-- AI核心技能 -->
-        <span style="font-size:13px; padding:6px 14px; background:var(--paper-red); border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(196,30,58,0.3);">AIGC多模态产出</span>
-        <span style="font-size:13px; padding:6px 14px; background:var(--paper-dark-red); border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(139,26,43,0.3);">大模型应用</span>
-        <span style="font-size:13px; padding:6px 14px; background:#6B3FA0; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(107,63,160,0.3);">Vibe Coding</span>
-        <span style="font-size:13px; padding:6px 14px; background:#2B5F8A; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(43,95,138,0.3);">Claude Code</span>
-        <span style="font-size:13px; padding:6px 14px; background:#4A7C3F; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(74,124,63,0.3);">GPT系列</span>
-        <!-- 工具技能 -->
-        <span style="font-size:13px; padding:6px 14px; background:#FFE0E6; border-radius:12px; color:#C41E3A; font-weight:600;">PS / PR / 剪映</span>
-        <span style="font-size:13px; padding:6px 14px; background:#D5E8FF; border-radius:12px; color:#1A4F7A; font-weight:600;">虚幻引擎5</span>
-        <!-- 证书 -->
-        <span style="font-size:13px; padding:6px 14px; background:#FFF0D5; border-radius:12px; color:#B8702A; font-weight:600;">自媒体运营（中级）</span>
-        <span style="font-size:13px; padding:6px 14px; background:#E8F5E0; border-radius:12px; color:#3D6B32; font-weight:600;">互联网营销师</span>
-        <span style="font-size:13px; padding:6px 14px; background:#F0E8FF; border-radius:12px; color:#5B3A8C; font-weight:600;">普通话等级证书</span>
-        <span style="font-size:13px; padding:6px 14px; background:#FFE8E0; border-radius:12px; color:#A0522D; font-weight:600;">轻型民用无人机驾驶证</span>
-        <span style="font-size:13px; padding:6px 14px; background:#E0F0F8; border-radius:12px; color:#2D6A7A; font-weight:600;">C1驾驶证</span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============ 视频号内容 ============ -->
 <section class="section" id="videochannel">
   <div class="container">
@@ -723,7 +563,7 @@
       AI生成短视频内容，涵盖剧情短剧、品牌推广、行业科普等多种类型
     </p>
 
-        <div class="video-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="video-flex">
       <div class="video-card">
         <video controls preload="metadata" poster="三分钟危机/b4e594bfae0ef854bad81619a0b6a06d.jpg">>
           <source src="三分钟危机/db5039e8e411a6f938edb4003c082201.mp4" type="video/mp4">
@@ -909,54 +749,91 @@
   </div>
 </section>
 
-<!-- ============ PROJECTS ============ -->
-<section class="section" id="projects">
+<!-- ============ AI DESIGN WORKS ============ -->
+<section class="section" id="design">
   <div class="container">
     <div class="section-title">
-      <span class="cn">项目作品</span>
-      <span class="en">Projects</span>
+      <span class="cn">AI设计作品</span>
+      <span class="en">AI-Generated Design</span>
     </div>
 
-    <!-- Chinese Chess -->
-    <div class="project-showcase">
-      <div class="preview" style="background: linear-gradient(135deg, #1a1a2e, #2d2d44); padding: 40px 20px; text-align: center;">
-        <span style="font-size:64px;">♚</span>
-        <p style="color:#e8d5b7; font-size:18px; letter-spacing:3px; margin-top:8px;">中国象棋</p>
-        <p style="color:#b0b0d0; font-size:12px; margin-top:4px;">交互式网页游戏</p>
-      </div>
-      <div class="desc">
-        <h3>♟️ 中国象棋 · 网页版</h3>
-        <p>
-          使用 HTML5 Canvas 开发的中国象棋交互游戏。支持<strong>人人对决</strong>和<strong>人机对决</strong>两种模式，
-          内置三级难度AI（困难/炼狱/地狱），包含走棋记录、悔棋、棋局状态显示等完整功能。
-          纯前端实现，无需任何后端服务。
-        </p>
-        <a href="中国象棋.html" target="_blank" style="display:inline-block; margin-top:12px; padding:8px 20px; background:var(--paper-red); color:#fff; text-decoration:none; border-radius:4px; font-size:14px; letter-spacing:1px;">
-          🎮 打开试玩
-        </a>
-      </div>
+    <p style="text-align:center; color:var(--text-mid); margin-bottom:24px; font-size:14px; letter-spacing:1px;">
+      通过AI工具进行多风格海报设计探索，展示公链产品的不同视觉表达方案<br>
+      涵盖 12 种风格方向，每套方案 4 张系列海报
+    </p>
+
+    <div class="style-tabs" id="styleTabs">
+      <button class="style-tab active" data-style="剪纸风格">✂️ 剪纸风格</button>
+      <button class="style-tab" data-style="像素风格">👾 像素风格</button>
+      <button class="style-tab" data-style="蒸汽波风格">🌊 蒸汽波</button>
+      <button class="style-tab" data-style="蒸汽朋克风格">⚙️ 蒸汽朋克</button>
+      <button class="style-tab" data-style="曼陀罗红和奢金">🌸 曼陀罗红·奢金</button>
+      <button class="style-tab" data-style="黑红方案">❤️ 黑红方案</button>
+      <button class="style-tab" data-style="蓝白方案">💙 蓝白方案</button>
+      <button class="style-tab" data-style="蓝紫方案">💜 蓝紫方案</button>
+      <button class="style-tab" data-style="绿色方案">💚 绿色方案</button>
+      <button class="style-tab" data-style="驼色与乌黑">🤎 驼色·乌黑</button>
+      <button class="style-tab" data-style="黑棕方案">🖤 黑棕方案</button>
+      <button class="style-tab" data-style="gemini">🧠 Gemini生成</button>
     </div>
 
-    <!-- Company Logo Wall -->
-    <div class="project-showcase">
-      <div class="desc" style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
-        <div style="flex:1; min-width:250px;">
-          <img src="公司logo墙.png" alt="公司Logo墙" style="width:100%; border-radius:4px; box-shadow:var(--shadow-cut);" loading="lazy">
+    <div class="poster-grid" id="posterGrid">
+      <!-- Dynamically filled by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ============ 视频广告 ============ -->
+<section class="section" id="videoads">
+  <div class="container">
+    <div class="section-title">
+      <span class="cn">视频广告</span>
+      <span class="en">Video Ads · Blockchain</span>
+    </div>
+    <div class="video-grid">
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(14).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链广告 · 一</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-design">海报串联</span>
         </div>
-        <div style="flex:1; min-width:250px;">
-          <h3>🏢 公司Logo墙设计</h3>
-          <p style="font-size:14px; color:var(--text-mid); margin-top:8px;">
-            为区块链企业设计的品牌Logo展示墙，体现企业技术实力与合作生态。
-            采用扁平化风格，兼顾正式感与科技感。
-          </p>
-          <span class="tag tag-design" style="margin-top:8px;">品牌设计</span>
-          <span class="tag tag-blockchain" style="margin-top:8px;">区块链</span>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(16).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链广告 · 二</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-design">海报串联</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(17).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链广告 · 三</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-design">海报串联</span>
+        </div>
+      </div>
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="江楷煜以往作品集视频内容/video(18).mp4" type="video/mp4">
+        </video>
+        <div class="info">
+          <h4>区块链广告 · 四</h4>
+          <span class="tag tag-blockchain">区块链</span>
+          <span class="tag tag-design">海报串联</span>
         </div>
       </div>
     </div>
   </div>
 </section>
-
 
 <!-- ============ 更多作品 ============ -->
 <section class="section" id="moreworks">
@@ -1015,6 +892,139 @@
           <span class="tag tag-video">剪辑</span>
           <span class="tag tag-design">练习</span>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="section" id="projects">
+  <div class="container">
+    <div class="section-title">
+      <span class="cn">项目作品</span>
+      <span class="en">Projects</span>
+    </div>
+
+    <!-- Chinese Chess -->
+    <div class="project-showcase">
+      <div class="preview" style="background: linear-gradient(135deg, #1a1a2e, #2d2d44); padding: 40px 20px; text-align: center;">
+        <span style="font-size:64px;">♚</span>
+        <p style="color:#e8d5b7; font-size:18px; letter-spacing:3px; margin-top:8px;">中国象棋</p>
+        <p style="color:#b0b0d0; font-size:12px; margin-top:4px;">交互式网页游戏</p>
+      </div>
+      <div class="desc">
+        <h3>♟️ 中国象棋 · 网页版</h3>
+        <p>
+          使用 HTML5 Canvas 开发的中国象棋交互游戏。支持<strong>人人对决</strong>和<strong>人机对决</strong>两种模式，
+          内置三级难度AI（困难/炼狱/地狱），包含走棋记录、悔棋、棋局状态显示等完整功能。
+          纯前端实现，无需任何后端服务。
+        </p>
+        <a href="中国象棋.html" target="_blank" style="display:inline-block; margin-top:12px; padding:8px 20px; background:var(--paper-red); color:#fff; text-decoration:none; border-radius:4px; font-size:14px; letter-spacing:1px;">
+          🎮 打开试玩
+        </a>
+      </div>
+    </div>
+
+    <!-- Company Logo Wall -->
+    <div class="project-showcase">
+      <div class="desc" style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:250px;">
+          <img src="公司logo墙.png" alt="公司Logo墙" style="width:100%; border-radius:4px; box-shadow:var(--shadow-cut);" loading="lazy">
+        </div>
+        <div style="flex:1; min-width:250px;">
+          <h3>🏢 公司Logo墙设计</h3>
+          <p style="font-size:14px; color:var(--text-mid); margin-top:8px;">
+            为区块链企业设计的品牌Logo展示墙，体现企业技术实力与合作生态。
+            采用扁平化风格，兼顾正式感与科技感。
+          </p>
+          <span class="tag tag-design" style="margin-top:8px;">品牌设计</span>
+          <span class="tag tag-blockchain" style="margin-top:8px;">区块链</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ EXPERIENCE ============ -->
+<section class="section" id="experience">
+  <div class="container">
+    <div class="section-title">
+      <span class="cn">教育 & 经历</span>
+      <span class="en">Education & Experience</span>
+    </div>
+
+    <!-- 教育背景 -->
+    <div class="exp-card" style="margin-bottom:24px;">
+      <div class="company">🎓 茂名职业技术学院</div>
+      <div class="role">传播与策划专业 <span style="font-size:12px; color:var(--text-light);">| 2023.09 - 2026.06</span></div>
+      <p style="font-size:13px; color:var(--text-mid); margin-top:8px;">
+        科班策划背景，具备"策划+技术"双向能力。掌握新媒体运营、活动策划及剪映、PS、虚幻引擎5、PR等工具，并深度进阶AIGC多模态内容产出、大模型应用与工作流搭建、Vibe Coding（AI辅助编程）等前沿技术。
+      </p>
+    </div>
+
+    <!-- 校园经历 -->
+    <div class="exp-card" style="margin-bottom:24px;">
+      <div class="company">🎭 院级艺术团副主席</div>
+      <div class="role">茂名职业技术学院 <span style="font-size:12px; color:var(--text-light);">| 2024.10 - 2025.10</span></div>
+      <ul>
+        <li>统筹艺术团运营：负责成员招募培训、场地物资协调及节目资源对接</li>
+        <li>牵头策划迎新晚会等院级活动，统筹20+人执行，覆盖500+师生，参与率85%</li>
+      </ul>
+    </div>
+
+    <!-- 实习经历标题 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:22px; color:var(--paper-dark-red); margin:28px 0 18px; letter-spacing:2px; text-align:center;">
+      💼 实习经历
+    </h3>
+
+    <div class="two-col">
+      <!-- 广卓 -->
+      <div class="exp-card">
+        <div class="company">广卓天晟（广州）网络科技有限责任公司</div>
+        <div class="role">AI内容运营 <span style="font-size:12px; color:var(--text-light);">| 2026.05 - 2026.07</span></div>
+        <ul>
+          <li><strong>短视频账号0-1起号：</strong>两周内累计播放1,775次，获8关注、13点赞、均播时长28.12秒，完播率18.64%</li>
+          <li><strong>内容策划与制作：</strong>产出<strong>8条区块链科普动画</strong> + <strong>7条业务推广短剧</strong>，涵盖RWA、稳定币、挖矿等主题</li>
+          <li><strong>AI全链路生产：</strong>搭建"文案→脚本→分镜→AI生成→剪辑"全流程，熟练运用ChatGPT、Gemini、豆包等AI工具</li>
+          <li><strong>AI视觉设计：</strong>产出12套共48张多风格品牌海报，独立完成公司LOGO墙设计及交付</li>
+          <li><strong>Vibe Coding实践：</strong>深度使用Claude Code等AI智能体开展辅助编程，探索AI在复杂创意生产中的应用</li>
+        </ul>
+      </div>
+
+      <!-- 电视台 -->
+      <div class="exp-card">
+        <div class="company">揭阳广播电视台</div>
+        <div class="role">融媒体中心 <span style="font-size:12px; color:var(--text-light);">| 2026.01 - 2026.03</span></div>
+        <ul>
+          <li>具备AI政务视频全流程制作能力，<strong>累计制作6条、辅助修改6条</strong>AI宣传视频，<strong>11条在官方视频号发布上线</strong></li>
+          <li>独立完成揭阳市人大会议代表通道全景拍摄，素材被官方新闻采用</li>
+          <li>熟练操作灯光设备、P3等拍摄器材，能配合团队完成拍摄策划及现场执行</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 技能证书 -->
+    <h3 style="font-family:'PaperCut','STKaiti','KaiTi',serif; font-size:20px; color:var(--paper-dark-red); margin:28px 0 16px; letter-spacing:2px; text-align:center;">
+      📜 技能 & 证书
+    </h3>
+    <div class="card" style="text-align:center;">
+      <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center;">
+        <!-- AI核心技能 -->
+        <span style="font-size:13px; padding:6px 14px; background:var(--paper-red); border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(196,30,58,0.3);">AIGC多模态产出</span>
+        <span style="font-size:13px; padding:6px 14px; background:var(--paper-dark-red); border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(139,26,43,0.3);">大模型应用</span>
+        <span style="font-size:13px; padding:6px 14px; background:#6B3FA0; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(107,63,160,0.3);">Vibe Coding</span>
+        <span style="font-size:13px; padding:6px 14px; background:#2B5F8A; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(43,95,138,0.3);">Claude Code</span>
+        <span style="font-size:13px; padding:6px 14px; background:#4A7C3F; border-radius:12px; color:#fff; font-weight:600; box-shadow:0 2px 6px rgba(74,124,63,0.3);">GPT系列</span>
+        <!-- 工具技能 -->
+        <span style="font-size:13px; padding:6px 14px; background:#FFE0E6; border-radius:12px; color:#C41E3A; font-weight:600;">PS / PR / 剪映</span>
+        <span style="font-size:13px; padding:6px 14px; background:#D5E8FF; border-radius:12px; color:#1A4F7A; font-weight:600;">虚幻引擎5</span>
+        <!-- 证书 -->
+        <span style="font-size:13px; padding:6px 14px; background:#FFF0D5; border-radius:12px; color:#B8702A; font-weight:600;">自媒体运营（中级）</span>
+        <span style="font-size:13px; padding:6px 14px; background:#E8F5E0; border-radius:12px; color:#3D6B32; font-weight:600;">互联网营销师</span>
+        <span style="font-size:13px; padding:6px 14px; background:#F0E8FF; border-radius:12px; color:#5B3A8C; font-weight:600;">普通话等级证书</span>
+        <span style="font-size:13px; padding:6px 14px; background:#FFE8E0; border-radius:12px; color:#A0522D; font-weight:600;">轻型民用无人机驾驶证</span>
+        <span style="font-size:13px; padding:6px 14px; background:#E0F0F8; border-radius:12px; color:#2D6A7A; font-weight:600;">C1驾驶证</span>
       </div>
     </div>
   </div>
